@@ -3,20 +3,26 @@ from django.utils import timezone
 
 
 class Status(models.Model):
-    name = models.CharField("Статус", max_length=64, unique=True)
+    """Справочник статусов ДДС (например: Бизнес, Личное, Налог и т.д.)."""
+
+    name = models.CharField("Название статуса", max_length=64, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Type(models.Model):
-    name = models.CharField("Тип", max_length=64, unique=True)
+    """Справочник типов движения денежных средств (например: Пополнение, Списание и т.д.)."""
+
+    name = models.CharField("Название типа", max_length=64, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Category(models.Model):
+    """Категория ДДС, привязанная к определённому типу (Type)."""
+
     name = models.CharField("Название категории", max_length=64)
     type = models.ForeignKey(Type, on_delete=models.CASCADE, related_name="categories", verbose_name="Тип")
 
@@ -30,7 +36,9 @@ class Category(models.Model):
 
 
 class SubCategory(models.Model):
-    name = models.CharField("Подкатегория", max_length=64)
+    """Подкатегория ДДС, привязанная к определённой категории (Category)."""
+
+    name = models.CharField("Название подкатегории", max_length=64)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="subcategories", verbose_name="Категория"
     )
@@ -45,6 +53,8 @@ class SubCategory(models.Model):
 
 
 class CashFlow(models.Model):
+    """Основная модель записи движения денежных средств."""
+
     created_at = models.DateField("Дата создания", default=timezone.now)
     status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name="Статус")
     type = models.ForeignKey(Type, on_delete=models.PROTECT, verbose_name="Тип")

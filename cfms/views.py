@@ -2,19 +2,25 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from cfms.forms import CashFlowForm, CategoryForm, StatusForm, SubCategoryForm, TypeForm
 from cfms.models import CashFlow, Category, Status, SubCategory, Type
 
 
 class CashFlowListView(ListView):
+    """
+    Представление для отображения списка записей ДДС с фильтрацией по дате, статусу, типу, категории и подкатегории.
+    """
+
     model = CashFlow
     template_name = "cfms/cashflow_list.html"
     context_object_name = "cashflows"
     paginate_by = 20
 
     def get_queryset(self):
+        """Возвращает отфильтрованный QuerySet по параметрам из GET-запроса."""
+
         qs = super().get_queryset()
         # Фильтрация по параметрам
         date_from = self.request.GET.get("date_from")
@@ -38,6 +44,8 @@ class CashFlowListView(ListView):
         return qs
 
     def get_context_data(self, **kwargs):
+        """Добавляет справочники для фильтров в контекст шаблона."""
+
         context = super().get_context_data(**kwargs)
         context["statuses"] = Status.objects.all()
         context["types"] = Type.objects.all()
@@ -47,6 +55,8 @@ class CashFlowListView(ListView):
 
 
 class CashFlowCreateView(CreateView):
+    """Создание новой записи ДДС."""
+
     model = CashFlow
     form_class = CashFlowForm
     template_name = "cfms/cashflow_form.html"
@@ -70,6 +80,8 @@ class CashFlowCreateView(CreateView):
 
 
 class CashFlowUpdateView(UpdateView):
+    """Редактирование существующей записи ДДС."""
+
     model = CashFlow
     form_class = CashFlowForm
     template_name = "cfms/cashflow_form.html"
@@ -82,20 +94,32 @@ class CashFlowUpdateView(UpdateView):
         context["subcategories"] = SubCategory.objects.select_related("category").all()
         return context
 
+
 class CashFlowDeleteView(DeleteView):
+    """Удаление записи ДДС с подтверждением."""
+
     model = CashFlow
     template_name = "cfms/cashflow_confirm_delete.html"
     success_url = reverse_lazy("cfms:cashflow_list")
 
 
 class DirectoryManageView(View):
+    """
+    Управление справочниками (статусы, типы, категории, подкатегории):
+    добавление, редактирование, удаление через одну страницу и модальное окно.
+    """
+
     template_name = "cfms/directory_manage.html"
 
     def get(self, request):
+        """Отображает страницу управления справочниками."""
+
         context = self.get_context_data()
         return render(request, self.template_name, context)
 
     def post(self, request):
+        """Обрабатывает добавление, редактирование и удаление элементов справочников."""
+
         action = request.POST.get("action")
         obj_type = request.POST.get("object_type")
         obj_id = request.POST.get("object_id")  # может быть пустым при добавлении
@@ -135,6 +159,8 @@ class DirectoryManageView(View):
         return render(request, self.template_name, context)
 
     def get_context_data(self):
+        """Возвращает контекст с формами и списками для всех справочников."""
+
         return {
             "statuses": Status.objects.all(),
             "types": Type.objects.all(),
@@ -148,10 +174,14 @@ class DirectoryManageView(View):
 
 
 def categories_by_type(request, type_id):
+    """Возвращает список категорий по типу."""
+
     categories = Category.objects.filter(type_id=type_id).values("id", "name")
     return JsonResponse(list(categories), safe=False)
 
 
 def subcategories_by_category(request, category_id):
+    """Возвращает список подкатегорий по категории."""
+
     subcategories = SubCategory.objects.filter(category_id=category_id).values("id", "name")
     return JsonResponse(list(subcategories), safe=False)

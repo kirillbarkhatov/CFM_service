@@ -1,7 +1,8 @@
 from django.urls import path
 
 from cfms.apps import CfmsConfig
-from cfms.views import CashFlowCreateView, CashFlowDeleteView, CashFlowListView, CashFlowUpdateView, DirectoryManageView, categories_by_type, subcategories_by_category
+from cfms.views import (CashFlowCreateView, CashFlowDeleteView, CashFlowListView, CashFlowUpdateView,
+                        DirectoryManageView, categories_by_type, subcategories_by_category)
 
 app_name = CfmsConfig.name
 

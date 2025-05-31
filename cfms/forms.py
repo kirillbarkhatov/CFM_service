@@ -4,12 +4,20 @@ from cfms.models import CashFlow, Category, Status, SubCategory, Type
 
 
 class CashFlowForm(forms.ModelForm):
+    """
+    Форма для создания и редактирования записей ДДС.
+    Реализует зависимость: категория фильтруется по типу, подкатегория по категории.
+    Валидация: сумма — только целое число, категории и подкатегории соответствуют выбранным типу/категории.
+    """
+
     class Meta:
         model = CashFlow
         fields = ["created_at", "status", "type", "category", "subcategory", "amount", "comment"]
         widgets = {
             "created_at": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "amount": forms.NumberInput(attrs={"class": "form-control", "inputmode": "numeric", "step": "1", "min": "0"}),
+            "amount": forms.NumberInput(
+                attrs={"class": "form-control", "inputmode": "numeric", "step": "1", "min": "0"}
+            ),
             "comment": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
         }
 
@@ -48,24 +56,32 @@ class CashFlowForm(forms.ModelForm):
 
 
 class StatusForm(forms.ModelForm):
+    """Форма для управления справочником статусов ДДС."""
+
     class Meta:
         model = Status
         fields = ["name"]
 
 
 class TypeForm(forms.ModelForm):
+    """Форма для управления справочником типов ДДС."""
+
     class Meta:
         model = Type
         fields = ["name"]
 
 
 class CategoryForm(forms.ModelForm):
+    """Форма для управления справочником категорий ДДС (связана с типом)."""
+
     class Meta:
         model = Category
         fields = ["name", "type"]
 
 
 class SubCategoryForm(forms.ModelForm):
+    """Форма для управления справочником подкатегорий ДДС (связана с категорией)."""
+
     class Meta:
         model = SubCategory
         fields = ["name", "category"]
