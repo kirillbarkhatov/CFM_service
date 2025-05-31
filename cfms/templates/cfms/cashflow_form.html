@@ -1,0 +1,140 @@
+{% extends "cfms/base.html" %}
+{% block title %}ДДС — {% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if form.instance.pk %}Редактировать запись{% else %}Добавить запись{% endif %}</h2>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+        <!-- Дата -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.created_at.label }} *</label>
+            {{ form.created_at }}
+            {% if form.created_at.errors %}
+                <div class="text-danger small">{{ form.created_at.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Тип -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.type.label }} *</label>
+            {{ form.type }}
+            {% if form.type.errors %}
+                <div class="text-danger small">{{ form.type.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Категория -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.category.label }} *</label>
+            {{ form.category }}
+            {% if form.category.errors %}
+                <div class="text-danger small">{{ form.category.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Подкатегория -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.subcategory.label }} *</label>
+            {{ form.subcategory }}
+            {% if form.subcategory.errors %}
+                <div class="text-danger small">{{ form.subcategory.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Статус -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.status.label }} *</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div class="text-danger small">{{ form.status.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Сумма -->
+        <div class="col-md-6">
+            <label class="form-label">{{ form.amount.label }} *</label>
+            {{ form.amount }}
+            {% if form.amount.errors %}
+                <div class="text-danger small">{{ form.amount.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Комментарий -->
+        <div class="col-md-12">
+            <label class="form-label">{{ form.comment.label }}</label>
+            {{ form.comment }}
+            {% if form.comment.errors %}
+                <div class="text-danger small">{{ form.comment.errors|striptags }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'cfms:cashflow_list' %}" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const typeSelect = document.getElementById("id_type");
+    const categorySelect = document.getElementById("id_category");
+    const subcategorySelect = document.getElementById("id_subcategory");
+    const amountInput = document.getElementById("id_amount");
+
+    function loadOptions(url, selectElement, placeholder) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    selectElement.appendChild(option);
+                });
+                selectElement.disabled = data.length === 0;
+            });
+    }
+
+    typeSelect.addEventListener("change", function () {
+        const typeId = this.value;
+        if (typeId) {
+            loadOptions(`/ajax/categories/${typeId}/`, categorySelect, "Выберите категорию");
+        } else {
+            categorySelect.innerHTML = `<option value="">Выберите тип сначала</option>`;
+            categorySelect.disabled = true;
+        }
+        subcategorySelect.innerHTML = `<option value="">Выберите категорию сначала</option>`;
+        subcategorySelect.disabled = true;
+    });
+
+    categorySelect.addEventListener("change", function () {
+        const categoryId = this.value;
+        if (categoryId) {
+            loadOptions(`/ajax/subcategories/${categoryId}/`, subcategorySelect, "Выберите подкатегорию");
+        } else {
+            subcategorySelect.innerHTML = `<option value="">Выберите категорию сначала</option>`;
+            subcategorySelect.disabled = true;
+        }
+    });
+
+    // Ограничение суммы только целыми числами
+    amountInput.setAttribute("step", "1");
+    amountInput.setAttribute("min", "0");
+    amountInput.addEventListener("input", function () {
+        this.value = this.value.replace(/[^\d]/g, "");
+    });
+
+    document.querySelector("form").addEventListener("submit", function (e) {
+        if (!/^\d+$/.test(amountInput.value)) {
+            e.preventDefault();
+            alert("Поле 'Сумма' должно содержать только целые числа");
+        }
+    });
+});
+</script>
+{% endblock %}

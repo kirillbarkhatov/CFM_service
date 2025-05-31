@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import os
 
+import os
 import sys
 from pathlib import Path
 
@@ -142,9 +142,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #     "*",  # Замените на адрес вашего фронтенд-сервера
 # ]
 
-CORS_ALLOW_ALL_ORIGINS = (
-    True  # Открытый доступ или используйте CORS_ALLOWED_ORIGINS для ограничения списка.
-)
+CORS_ALLOW_ALL_ORIGINS = True  # Открытый доступ или используйте CORS_ALLOWED_ORIGINS для ограничения списка.
 
 if "test" in sys.argv:
     DATABASES = {
