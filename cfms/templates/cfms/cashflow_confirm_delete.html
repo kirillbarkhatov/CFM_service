@@ -1,0 +1,10 @@
+{% extends "cfms/base.html" %}
+{% block title %}Удалить запись{% endblock %}
+{% block content %}
+<h2>Удалить запись</h2>
+<p>Вы уверены, что хотите удалить запись от <b>{{ object.created_at }}</b> на сумму <b>{{ object.amount }} ₽</b>?</p>
+<form method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a href="{% url 'cfms:cashflow_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %} 

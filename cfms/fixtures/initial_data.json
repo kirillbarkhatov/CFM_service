@@ -1,0 +1,140 @@
+[
+{
+  "model": "cfms.status",
+  "pk": 1,
+  "fields": {
+    "name": "Бизнес"
+  }
+},
+{
+  "model": "cfms.status",
+  "pk": 2,
+  "fields": {
+    "name": "Личное"
+  }
+},
+{
+  "model": "cfms.status",
+  "pk": 4,
+  "fields": {
+    "name": "Налог"
+  }
+},
+{
+  "model": "cfms.type",
+  "pk": 1,
+  "fields": {
+    "name": "Пополнение"
+  }
+},
+{
+  "model": "cfms.type",
+  "pk": 3,
+  "fields": {
+    "name": "Списание"
+  }
+},
+{
+  "model": "cfms.category",
+  "pk": 1,
+  "fields": {
+    "name": "Инфраструктура",
+    "type": 3
+  }
+},
+{
+  "model": "cfms.category",
+  "pk": 2,
+  "fields": {
+    "name": "Маркетинг",
+    "type": 3
+  }
+},
+{
+  "model": "cfms.category",
+  "pk": 3,
+  "fields": {
+    "name": "Продажа",
+    "type": 1
+  }
+},
+{
+  "model": "cfms.subcategory",
+  "pk": 1,
+  "fields": {
+    "name": "VPS",
+    "category": 1
+  }
+},
+{
+  "model": "cfms.subcategory",
+  "pk": 2,
+  "fields": {
+    "name": "Proxy",
+    "category": 1
+  }
+},
+{
+  "model": "cfms.subcategory",
+  "pk": 3,
+  "fields": {
+    "name": "Farpost",
+    "category": 2
+  }
+},
+{
+  "model": "cfms.subcategory",
+  "pk": 5,
+  "fields": {
+    "name": "Avito",
+    "category": 2
+  }
+},
+{
+  "model": "cfms.subcategory",
+  "pk": 6,
+  "fields": {
+    "name": "Подписка",
+    "category": 3
+  }
+},
+{
+  "model": "cfms.cashflow",
+  "pk": 5,
+  "fields": {
+    "created_at": "2025-06-01",
+    "status": 1,
+    "type": 1,
+    "category": 3,
+    "subcategory": 6,
+    "amount": "100.00",
+    "comment": "Первая продажа!"
+  }
+},
+{
+  "model": "cfms.cashflow",
+  "pk": 6,
+  "fields": {
+    "created_at": "2025-05-30",
+    "status": 1,
+    "type": 3,
+    "category": 1,
+    "subcategory": 1,
+    "amount": "1000.00",
+    "comment": "Запуск сервиса"
+  }
+},
+{
+  "model": "cfms.cashflow",
+  "pk": 7,
+  "fields": {
+    "created_at": "2025-06-02",
+    "status": 1,
+    "type": 3,
+    "category": 2,
+    "subcategory": 5,
+    "amount": "200.00",
+    "comment": "Объявление"
+  }
+}
+]

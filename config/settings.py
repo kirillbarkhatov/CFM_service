@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import os
 
+import os
 import sys
 from pathlib import Path
 
@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -133,6 +133,13 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -142,9 +149,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #     "*",  # Замените на адрес вашего фронтенд-сервера
 # ]
 
-CORS_ALLOW_ALL_ORIGINS = (
-    True  # Открытый доступ или используйте CORS_ALLOWED_ORIGINS для ограничения списка.
-)
+CORS_ALLOW_ALL_ORIGINS = True  # Открытый доступ или используйте CORS_ALLOWED_ORIGINS для ограничения списка.
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1",
+]
 
 if "test" in sys.argv:
     DATABASES = {
