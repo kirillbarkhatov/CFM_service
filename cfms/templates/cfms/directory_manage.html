@@ -1,0 +1,233 @@
+{% extends "cfms/base.html" %}
+{% load static %}
+
+{% block title %}Справочники{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Справочники</h2>
+<div class="row">
+    <!-- Статусы -->
+    <div class="col-md-3">
+        <h4>Статусы</h4>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="object_type" value="status">
+            {{ status_form.as_p }}
+            <button class="btn btn-sm btn-success">Добавить</button>
+        </form>
+        <ul class="list-group mt-2">
+            {% for s in statuses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ s.name }}
+                <div>
+                    <button type="button" class="btn btn-sm btn-warning me-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-id="{{ s.id }}"
+                            data-name="{{ s.name }}"
+                            data-type="status">✏️</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="object_type" value="status">
+                        <input type="hidden" name="object_id" value="{{ s.id }}">
+                        <button class="btn btn-sm btn-danger">🗑</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Типы -->
+    <div class="col-md-3">
+        <h4>Типы</h4>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="object_type" value="type">
+            {{ type_form.as_p }}
+            <button class="btn btn-sm btn-success">Добавить</button>
+        </form>
+        <ul class="list-group mt-2">
+            {% for t in types %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ t.name }}
+                <div>
+                    <button type="button" class="btn btn-sm btn-warning me-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-id="{{ t.id }}"
+                            data-name="{{ t.name }}"
+                            data-type="type">✏️</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="object_type" value="type">
+                        <input type="hidden" name="object_id" value="{{ t.id }}">
+                        <button class="btn btn-sm btn-danger">🗑</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Категории -->
+    <div class="col-md-3">
+        <h4>Категории</h4>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="object_type" value="category">
+            {{ category_form.as_p }}
+            <button class="btn btn-sm btn-success">Добавить</button>
+        </form>
+        <ul class="list-group mt-2">
+            {% for c in categories %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ c.name }} ({{ c.type.name }})
+                <div>
+                    <button type="button" class="btn btn-sm btn-warning me-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-id="{{ c.id }}"
+                            data-name="{{ c.name }}"
+                            data-type="category"
+                            data-type-id="{{ c.type.id }}">✏️</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="object_type" value="category">
+                        <input type="hidden" name="object_id" value="{{ c.id }}">
+                        <button class="btn btn-sm btn-danger">🗑</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Подкатегории -->
+    <div class="col-md-3">
+        <h4>Подкатегории</h4>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="object_type" value="subcategory">
+            {{ subcategory_form.as_p }}
+            <button class="btn btn-sm btn-success">Добавить</button>
+        </form>
+        <ul class="list-group mt-2">
+            {% for sc in subcategories %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ sc.name }} ({{ sc.category.name }})
+                <div>
+                    <button type="button" class="btn btn-sm btn-warning me-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-id="{{ sc.id }}"
+                            data-name="{{ sc.name }}"
+                            data-type="subcategory"
+                            data-category="{{ sc.category.id }}">✏️</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="object_type" value="subcategory">
+                        <input type="hidden" name="object_id" value="{{ sc.id }}">
+                        <button class="btn btn-sm btn-danger">🗑</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editForm" method="post">
+      {% csrf_token %}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Редактировать</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body" id="editFormBody">
+          <!-- Поля подставляются через JS -->
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="action" value="edit">
+          <input type="hidden" name="object_type" id="editObjectType">
+          <input type="hidden" name="object_id" id="editObjectId">
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const editModal = document.getElementById('editModal');
+  editModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+    const type = button.getAttribute('data-type');
+    const categoryId = button.getAttribute('data-category');
+    const typeId = button.getAttribute('data-type-id');
+
+    document.getElementById('editObjectType').value = type;
+    document.getElementById('editObjectId').value = id;
+
+    let formHtml = `
+      <div class="mb-3">
+        <label for="editName" class="form-label">Название</label>
+        <input type="text" class="form-control" name="name" id="editName" value="${name}">
+      </div>`;
+
+    if (type === "subcategory") {
+      formHtml += `
+        <div class="mb-3">
+          <label for="editCategory" class="form-label">Категория</label>
+          <select class="form-select" name="category" id="editCategory">
+            {% for c in categories %}
+              <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>`;
+    }
+
+    if (type === "category") {
+      formHtml += `
+        <div class="mb-3">
+          <label for="editType" class="form-label">Тип</label>
+          <select class="form-select" name="type" id="editType">
+            {% for t in types %}
+              <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %}
+          </select>
+        </div>`;
+    }
+
+    document.getElementById('editFormBody').innerHTML = formHtml;
+
+    setTimeout(() => {
+      if (type === "subcategory" && categoryId) {
+        const select = document.getElementById('editCategory');
+        if (select) select.value = categoryId;
+      }
+      if (type === "category" && typeId) {
+        const select = document.getElementById('editType');
+        if (select) select.value = typeId;
+      }
+    }, 50);
+  });
+});
+</script>
+{% endblock %}
