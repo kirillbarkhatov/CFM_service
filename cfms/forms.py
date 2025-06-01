@@ -1,6 +1,8 @@
 from django import forms
+from django.utils import timezone
 
 from cfms.models import CashFlow, Category, Status, SubCategory, Type
+from cfms.services import validate_category_type, validate_subcategory_category
 
 
 class CashFlowForm(forms.ModelForm):
@@ -39,7 +41,15 @@ class CashFlowForm(forms.ModelForm):
         amount = self.cleaned_data.get("amount")
         if amount is not None and amount % 1 != 0:
             raise forms.ValidationError("Введите целое число.")
+        if amount is not None and amount < 0:
+            raise forms.ValidationError("Сумма не может быть отрицательной.")
         return amount
+
+    def clean_created_at(self):
+        created_at = self.cleaned_data.get("created_at")
+        if created_at and created_at > timezone.now().date():
+            raise forms.ValidationError("Дата создания не может быть в будущем.")
+        return created_at
 
     def clean(self):
         cleaned_data = super().clean()
@@ -47,9 +57,9 @@ class CashFlowForm(forms.ModelForm):
         category = cleaned_data.get("category")
         subcategory = cleaned_data.get("subcategory")
 
-        if category and type_ and category.type_id != type_.id:
+        if not validate_category_type(category, type_):
             self.add_error("category", "Категория не относится к выбранному типу.")
-        if subcategory and category and subcategory.category_id != category.id:
+        if not validate_subcategory_category(subcategory, category):
             self.add_error("subcategory", "Подкатегория не относится к выбранной категории.")
 
         return cleaned_data
