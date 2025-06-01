@@ -9,6 +9,7 @@ CFM Service — это современное веб-приложение для
 - Bootstrap 5 (UI)
 - PostgreSQL
 - Docker, Docker Compose
+- nginx
 
 ---
 
@@ -27,7 +28,7 @@ CFM Service — это современное веб-приложение для
 
 ### 1. Клонируйте репозиторий
 ```sh
-git clone <your-repo-url>
+git clone https://github.com/kirillbarkhatov/CFM_service.git
 cd CFM_service
 ```
 
@@ -46,11 +47,10 @@ docker-compose up --build
 
 ### 4. Миграции и суперпользователь
 ```sh
-docker-compose run web python manage.py migrate
-# (по желанию) загрузить справочники:
-docker-compose run web python manage.py load_initial_data
+docker-compose exec web python manage.py migrate
+
 # создать суперпользователя:
-docker-compose run web python manage.py createsuperuser
+docker-compose exec web python manage.py createsuperuser
 ```
 
 ---
@@ -59,11 +59,11 @@ docker-compose run web python manage.py createsuperuser
 
 - **Выгрузить актуальные данные:**
   ```sh
-  python manage.py dumpdata cfms.status cfms.type cfms.category cfms.subcategory --indent 2 > cfms/fixtures/initial_data.json
+  docker-compose exec web python manage.py dumpdata cfms.status cfms.type cfms.category cfms.subcategory --indent 2 > cfms/fixtures/initial_data.json
   ```
 - **Загрузить справочники:**
   ```sh
-  python manage.py load_initial_data
+  docker-compose exec web python manage.py load_initial_data
   ```
 
 ---
